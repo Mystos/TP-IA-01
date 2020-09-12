@@ -8,13 +8,13 @@ public class Grid<PathNode>
 {
     public int width { get; }
     public int height { get; }
-    private float cellSize;
+    public float cellSize;
     public  Vector3 originPosition { get; }
     public PathNode[,] gridArray;
     private TextMesh[,] debugTextArray;
 
 
-    public Grid(int width, int height, float cellSize, Vector3Int originPosition, Func<Grid<PathNode>, int, int, PathNode> createPathNode)
+    public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<PathNode>, int, int, PathNode> createPathNode)
     {
         this.width = width;
         this.height = height;
@@ -40,7 +40,7 @@ public class Grid<PathNode>
 
     private Vector3 GetWorldPosition(int x, int y)
     {
-        return originPosition + new Vector3(x, y); // * cellSize;
+        return originPosition + new Vector3(x, y) * cellSize ; 
     }
 
     public void GetXY(Vector3 worldPosition, out int x, out int y)
@@ -73,7 +73,7 @@ public class Grid<PathNode>
         }
         else
         {
-            return default(PathNode);
+            return default;
         }
     }
 
@@ -85,7 +85,7 @@ public class Grid<PathNode>
         return GetValue(x, y);
     }
 
-    public static TextMesh CreateWorldText(string text, Vector3 localPosition = default(Vector3), int fontSize = 40, Color color = default(Color), TextAnchor textAnchor = TextAnchor.UpperLeft, TextAlignment textAlignment = TextAlignment.Left, int sortingOrder = 0)
+    public static TextMesh CreateWorldText(string text, Vector3 localPosition = default, int fontSize = 40, Color color = default, TextAnchor textAnchor = TextAnchor.UpperLeft, TextAlignment textAlignment = TextAlignment.Left, int sortingOrder = 0)
     {
         if (color == Color.clear) color = Color.white;
         return CreateWorldText(null, text, localPosition, fontSize, color, textAnchor, textAlignment, sortingOrder);

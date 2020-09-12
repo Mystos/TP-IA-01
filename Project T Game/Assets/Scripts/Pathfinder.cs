@@ -8,14 +8,15 @@ public class Pathfinder
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
 
-
+    public static Pathfinder Instance { get; private set; }
     public Grid<PathNode> grid;
     private List<PathNode> openList;
     private List<PathNode> closedList;
     
 
-    public Pathfinder(int width, int height, Tilemap tilemap, Vector3Int originPosition)
+    public Pathfinder(int width, int height, Tilemap tilemap, Vector3 originPosition)
     {
+        Instance = this;
         grid = new Grid<PathNode>(width, height, 1f, originPosition, (Grid<PathNode> grid,int x, int y) => new PathNode(grid,x,y));
         foreach(PathNode path in grid.gridArray)
         {
@@ -23,6 +24,28 @@ public class Pathfinder
             {
                     path.isWalkable = false;
             }
+        }
+
+    }
+
+    public List<Vector3> FindPath(Vector3 startWorldPosition, Vector3 endWorldPosition)
+    {
+        grid.GetXY(startWorldPosition, out int startX, out int startY);
+        grid.GetXY(endWorldPosition, out int endX, out int endY);
+
+        List<PathNode> path = FindPath(startX, startY, endX, endY);
+        if(path == null)
+        {
+            return null;
+        }else
+        {
+            List<Vector3> vectorPath = new List<Vector3>();
+            foreach(PathNode pathNode in path)
+            {
+                vectorPath.Add(new Vector3(pathNode.X, pathNode.Y) * grid.cellSize + Vector3.one * grid.cellSize * .5f);
+            }
+
+            return vectorPath;
         }
 
     }
@@ -127,8 +150,10 @@ public class Pathfinder
 
     private List<PathNode> CalculatePath(PathNode endNode)
     {
-        List<PathNode> path = new List<PathNode>();
-        path.Add(endNode);
+        List<PathNode> path = new List<PathNode>
+        {
+            endNode
+        };
         PathNode currentNode = endNode;
         while(currentNode.previousNode != null)
         {

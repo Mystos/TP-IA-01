@@ -13,6 +13,7 @@ public class EnemyBehaviour : MonoBehaviour
     public Rigidbody2D rb;
     public GameObject redEyes;
     private Vector3 velocity;
+    private List<Vector3> pathToTarget;
 
     private void Update()
     {
@@ -34,10 +35,25 @@ public class EnemyBehaviour : MonoBehaviour
 
     void EnemyMovement()
     {
-        Vector3 dir = target.transform.position - transform.position;
-        //rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref velocity, 0.05f);
-        rb.AddForce(dir * moveSpeed);
+        pathToTarget = Pathfinder.Instance.FindPath(transform.position, target.transform.position);
+        if (pathToTarget != null)
+        {
+            for (int i = 0; i < pathToTarget.Count - 1; i++)
+            {
+                Debug.DrawLine(pathToTarget[i], pathToTarget[i + 1], Color.red);
+            }
+        }
+        Vector3 direction = (pathToTarget[1] - transform.position ).normalized;
+
+        if (Vector3.Distance(transform.position, target.transform.position) > 1f)
+        {
+            //rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref velocity, 0.05f);
+            Vector3 vec = transform.position + direction * moveSpeed * Time.deltaTime;
+            rb.MovePosition(vec);
+        }
+
     }
+
 
     void TargetChange(GameObject newTarget)
     {
@@ -49,15 +65,15 @@ public class EnemyBehaviour : MonoBehaviour
         if (newTarget != target)
         {
             target = newTarget;
-            if (!facingRight)
-            {
-                Instantiate(redEyes, new Vector3(this.transform.position.x + -0.2f, this.transform.position.y + 0.1f), Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(redEyes, new Vector3(this.transform.position.x + 0.2f, this.transform.position.y + 0.1f), Quaternion.identity);
+            //if (!facingRight)
+            //{
+            //    Instantiate(redEyes, new Vector3(this.transform.position.x + -0.2f, this.transform.position.y + 0.1f), Quaternion.identity);
+            //}
+            //else
+            //{
+            //    Instantiate(redEyes, new Vector3(this.transform.position.x + 0.2f, this.transform.position.y + 0.1f), Quaternion.identity);
 
-            }
+            //}
 
         }
     }
