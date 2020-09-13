@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class Pathfinder 
 {
-    private const int MOVE_STRAIGHT_COST = 10;
+    private const int MOVE_STRAIGHT_COST = 5;
     private const int MOVE_DIAGONAL_COST = 14;
 
     public static Pathfinder Instance { get; private set; }
@@ -18,11 +18,12 @@ public class Pathfinder
     {
         Instance = this;
         grid = new Grid<PathNode>(width, height, 1f, originPosition, (Grid<PathNode> grid,int x, int y) => new PathNode(grid,x,y));
-        foreach(PathNode path in grid.gridArray)
+        foreach (PathNode pNode in Pathfinder.Instance.grid.gridArray)
         {
-            if (tilemap.HasTile(new Vector3Int(path.X, path.Y,0)))
+            Pathfinder.Instance.grid.GetXY(new Vector3(pNode.X, pNode.Y), out int x, out int y);
+            if (tilemap.HasTile(tilemap.WorldToCell(new Vector3(x, y, 0))))
             {
-                    path.isWalkable = false;
+                pNode.isWalkable = false;
             }
         }
 

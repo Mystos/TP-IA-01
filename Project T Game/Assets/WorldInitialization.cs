@@ -10,6 +10,7 @@ public class WorldInitialization : MonoBehaviour
     public Tilemap tilemap;
     public Transform player;
     public Vector3 originPosition;
+    public Tile tile;
 
 
 
@@ -17,6 +18,7 @@ public class WorldInitialization : MonoBehaviour
     void Start()
     {
         new Pathfinder(x, y, tilemap, originPosition);
+
     }
 
     // Update is called once per frame
@@ -26,12 +28,24 @@ public class WorldInitialization : MonoBehaviour
         {
             Vector3 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Pathfinder.Instance.grid.GetXY(vec, out int x, out int y);
-            List<Vector3> path = Pathfinder.Instance.FindPath(Vector3Int.FloorToInt(player.position), new Vector3(x, y, 0));
+            Pathfinder.Instance.grid.GetXY(player.position, out int xx, out int yy);
+            List<Vector3> path = Pathfinder.Instance.FindPath(new Vector3(xx, yy, 0), new Vector3(x, y, 0));
             if (path != null)
             {
                 for (int i = 0; i < path.Count - 1; i++)
                 {
                     Debug.DrawLine(path[i], path[i + 1], Color.green, 100f);
+                }
+            }
+            //Pathfinder.Instance.grid.GetXY(vec, out int xx, out int yy);
+
+            //tilemap.SetTile(tilemap.WorldToCell(new Vector3(xx, yy,0)), tile);
+
+            foreach (PathNode pNode in Pathfinder.Instance.grid.gridArray)
+            {
+                Pathfinder.Instance.grid.GetXY(new Vector3(pNode.X, pNode.Y), out int xxx, out int yyy);
+                if(tilemap.HasTile(tilemap.WorldToCell(new Vector3(xxx, yyy, 0)))){
+                    tilemap.SetTile(tilemap.WorldToCell(new Vector3(xxx, yyy, 0)), tile);
                 }
             }
         }
