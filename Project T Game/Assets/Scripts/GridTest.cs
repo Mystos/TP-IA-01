@@ -20,7 +20,7 @@ public class GridTest : MonoBehaviour
         {
             Vector3 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Pathfinder.Instance.grid.GetXY(vec, out int x, out int y);
-            List<Vector3> path = Pathfinder.Instance.FindPath(Vector3Int.FloorToInt(player.position), new Vector3(x,y,0));
+            List<Vector3> path = Pathfinder.Instance.FindPath(Vector3Int.FloorToInt(player.position), new Vector3(x,y,0), false);
             if (path != null)
             {
                 for (int i = 0; i < path.Count-1; i++)

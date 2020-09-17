@@ -12,6 +12,7 @@ public class EnemyBehaviour : MonoBehaviour
     public Animator anim;
     public Rigidbody2D rb;
     public GameObject redEyes;
+    public bool useAEtoile = true;
     private Vector3 velocity;
     private List<Vector3> pathToTarget;
 
@@ -35,7 +36,8 @@ public class EnemyBehaviour : MonoBehaviour
 
     void EnemyMovement()
     {
-        pathToTarget = Pathfinder.Instance.FindPath(transform.position, target.transform.position);
+        Vector3 direction;
+        pathToTarget = Pathfinder.Instance.FindPath(transform.position, target.transform.position, useAEtoile);
         if (pathToTarget != null)
         {
             for (int i = 0; i < pathToTarget.Count - 1; i++)
@@ -43,7 +45,15 @@ public class EnemyBehaviour : MonoBehaviour
                 Debug.DrawLine(pathToTarget[i], pathToTarget[i + 1], Color.red);
             }
         }
-        Vector3 direction = (pathToTarget[1] - transform.position ).normalized;
+        if(useAEtoile)
+        {
+            direction = (pathToTarget[1] - transform.position).normalized;
+        }
+        else
+        {
+            direction = (pathToTarget[0] - transform.position).normalized;
+        }
+
 
         if (Vector3.Distance(transform.position, target.transform.position) > 1f)
         {
@@ -51,6 +61,8 @@ public class EnemyBehaviour : MonoBehaviour
             Vector3 vec = transform.position + direction * moveSpeed * Time.deltaTime;
             rb.MovePosition(vec);
         }
+
+
 
     }
 

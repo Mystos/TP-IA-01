@@ -12,6 +12,7 @@ public class PathNode
     public int gCost;
     public int hCost;
     public int fCost;
+    public float weight;
 
     public PathNode previousNode;
 
